@@ -1,0 +1,73 @@
+(function ($) {
+    "use strict";
+
+    var projectSearch = '';
+    var projectStatus = '';
+    var projectType = '';
+    var projectLocation = '';
+    var projectLayout = '1';
+
+    $('#project-search').on('keyup', function(e){
+        projectSearch = $(this).val();
+        projectStatus = $('#project-status').val() || $('input[name="statusRadioDefault"]:checked').val();
+        projectType = $('#project-type').val() || $('input[name="typeRadioDefault"]:checked').val();
+        projectLocation = $('#project-location').val() || $('input[name="locationRadioDefault"]:checked').val();
+        projectLayout = $('input[name="layout"]').length ? $('input[name="layout"]').val() : 1;
+        ajax_send(projectSearch, projectStatus, projectType, projectLocation, projectLayout);
+    });
+
+
+    $('#project-status, .status-cls').on('change', function(e){
+        projectStatus = $(this).val();
+        projectSearch = $('#project-search').val();
+        projectType = $('#project-type').val() || $('input[name="typeRadioDefault"]:checked').val();
+        projectLocation = $('#project-location').val() || $('input[name="locationRadioDefault"]:checked').val();
+        projectLayout = $('input[name="layout"]').length ? $('input[name="layout"]').val() : 1;
+        ajax_send(projectSearch, projectStatus, projectType, projectLocation, projectLayout);
+    });
+
+    $('#project-type, .type-cls').on('change', function(e){
+        projectType = $(this).val();
+        projectStatus = $('#project-status').val()  || $('input[name="statusRadioDefault"]:checked').val();
+        projectSearch = $('#project-search').val();
+        projectLocation = $('#project-location').val() || $('input[name="locationRadioDefault"]:checked').val();
+        projectLayout = $('input[name="layout"]').length ? $('input[name="layout"]').val() : 1;
+        ajax_send(projectSearch, projectStatus, projectType, projectLocation, projectLayout);
+    });
+
+
+    $('#project-location, .location-cls').on('change', function(e){
+        projectLocation = $(this).val();
+        projectStatus = $('#project-status').val() || $('input[name="statusRadioDefault"]:checked').val();
+        projectSearch = $('#project-search').val();
+        projectType = $('#project-type').val() || $('input[name="typeRadioDefault"]:checked').val();
+        projectLayout = $('input[name="layout"]').length ? $('input[name="layout"]').val() : 1;
+        ajax_send(projectSearch, projectStatus, projectType, projectLocation, projectLayout);
+    });
+
+
+
+    function ajax_send(psearch, pstatus, ptype, plocation, playout){
+        $.ajax({
+            url: project.ajax_url,
+            method: 'POST',
+            data: {
+                action:'get_ajax_data',
+                _wpnonce: project.ajax_nonce,
+                _psearch: psearch,
+                _pstatus: pstatus,
+                _ptype: ptype,
+                _plocation: plocation,
+                _playout: playout,
+            },
+            beforeSend: function(){
+                $('.project-item-wrap>.row').html(`<div class="reland-spinner-wrap"><span class="reland-spinner" area-hidden="true"></span></div>`)
+            },
+            success: function(response) {
+                $('.project-item-wrap>.row').html(response);
+                ($('.project-item-wrap>.row>*').length < 6)? $('.pagination-wrap').hide() : $('.pagination-wrap').show();
+            }
+        })
+    }
+
+}(jQuery));
